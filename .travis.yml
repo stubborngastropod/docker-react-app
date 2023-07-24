@@ -6,11 +6,20 @@ services:
   - docker
 
 before_install:
-  - echo "start creating an image with dockerfile"
+  - echo "test start"
   - docker build -t stubborngastropod/docker-react-app -f Dockerfile.dev .
 
 script:
   - docker run -e CI=true stubborngastropod/docker-react-app npm run test -- --coverage
 
-after_success:
-  - echo "test success"
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-northeast-2"
+  app: "docker-react-app"
+  env: "Docker-react-app-env"
+  bucket_name: "docker-react-app"
+  bucket_path: "elasticbeanstalk-ap-northeast-2-819542549062"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key_id: $AWS_SECRET_ACCESS_KEY
